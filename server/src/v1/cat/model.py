@@ -44,7 +44,7 @@ class CatModel():
                 sql = "SELECT " + ','.join(fields) + " FROM cats WHERE id = %s"
                 cat = db.fetchone(sql, filters['id'])
                 return cat
-            if  'offset' in filters:
+            if 'offset' in filters:
                 offset = int(filters['offset'])
             if 'limit' in filters:
                 limit = int(filters['limit'])
@@ -52,12 +52,13 @@ class CatModel():
         sql = "SELECT " + cols + " FROM cats"
         if not count_only:
             sql += " ORDER BY name LIMIT " + str(offset) + ", " + str(limit)
+        db.connect().ping()
         if count_only:
             row = db.fetchone(sql)
             return row['total'] if row else 0
         else:
             return db.fetchall(sql)
- 
+
     def update(self, cats):
         if not isinstance(cats, (list, tuple)):
             cats = [cats]
@@ -71,7 +72,7 @@ class CatModel():
         db = Db.get_instance()
         db.transactional(queries)
         return cats
-    
+
     def delete(self, cats):
         counter = 0
         if not isinstance(cats, (list, tuple)):
@@ -84,4 +85,4 @@ class CatModel():
         queries.append({"sql": sql, "bind": cats})
         db = Db.get_instance()
         counter = db.transactional(queries)
-        return
+        return 
